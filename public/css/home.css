@@ -1,0 +1,12 @@
+.parent {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+}
+
+.parent div {
+    background-color: #f1f1f1;
+    margin: 10px;
+    padding: 20px;
+    font-size: 30px;
+}
