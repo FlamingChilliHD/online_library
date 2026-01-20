@@ -28,7 +28,7 @@ class UpdateLoanFines extends Command
     {
         $base_fine = 0.75; // 75p fine per day
 
-        $overdue_loans = Loan::where('due_date', '<', now()->toDateTimeString())
+        $overdue_loans = Loan::where('due_date', '<', today())
         ->whereNull('returned_at')
         ->get();
 
