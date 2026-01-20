@@ -12,7 +12,7 @@ class UpdateLoanFines extends Command
      *
      * @var string
      */
-    protected $signature = 'app:update-loan-fines';
+    protected $signature = 'loans:update-fines';
 
     /**
      * The console command description.
@@ -28,15 +28,20 @@ class UpdateLoanFines extends Command
     {
         $base_fine = 0.75; // 75p fine per day
 
-        $overdue_loans = Loan::where('due_date', '<', now())
+        $overdue_loans = Loan::where('due_date', '<', now()->toDateTimeString())
         ->whereNull('returned_at')
         ->get();
 
         foreach ($overdue_loans as $loan) {
-            $days_overdue = now()->diffInDays($loan->due_date);
+            $days_overdue = abs(today()->diffInDays($loan->due_date));
 
-            $loan->fine_amount = $days_overdue * $base_fine;
-            $loan->save();
+            $applied_days = max(1, $days_overdue);
+
+            $loan->update([
+                'fine_amount' => $applied_days * $base_fine,
+            ]);
+
+            $this->info("Loan ID {$loan->id}: Overdue by {$days_overdue} days. Fine: " . ($days_overdue * $base_fine));
         }
     }
 }

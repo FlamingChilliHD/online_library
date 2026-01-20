@@ -15,9 +15,9 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id');
             $table->foreignId('book_id');
-            $table->dateTime('borrowed_at');
+            $table->date('borrowed_at');
             $table->date('due_date');
-            $table->dateTime('returned_at')->nullable();
+            $table->date('returned_at')->nullable();
             $table->decimal('fine_amount', 8, 2)->nullable();
             $table->timestamps();
         });
