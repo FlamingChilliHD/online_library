@@ -12,6 +12,7 @@ class Loan extends Model
         'user_id',
         'book_id',
         'due_date',
+        'fine_amount',
     ];
 
     public function user(): BelongsTo {
