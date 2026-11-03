@@ -2,22 +2,7 @@
 
 @section('content')
     <div class="container mt-4">
-        <h1>Book Loan</h1>
-
-        @php
-            $messages = [];
-            if ($msg = session('success')) $messages[] = $msg;
-        @endphp
-
-        @if(!empty($messages))
-            <div class="alert alert-success">
-                <ul>
-                    @foreach($messages as $message)
-                        <li>{{ $message }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
+        <h1>My Loans</h1>
 
         <table class="table table-striped">
             <thead>
@@ -26,26 +11,36 @@
                     <th>Author</th>
                     <th>ISBN</th>
                     <th>Category</th>
-                    <th>Loan Duration</th>
-                    <th>Borrowed At</th>
+                    <th>Borrowed</th>
+                    <th>Due</th>
                     <th>Actions</th>
                 </tr>
             </thead>
 
             <tbody>
+                @forelse ($loans as $loan)
                     <tr>
                         <td>{{ $loan->book->title }}</td>
                         <td>{{ $loan->book->author }}</td>
                         <td>{{ $loan->book->ISBN }}</td>
                         <td>{{ $loan->book->category->name }}</td>
-                        <td>{{ $loan->due_date }}</td>
-                        <td>{{ $loan->borrowed_at }}</td>
+                        <td>{{ $loan->getBorrowDate() }}</td>
+                        <td>{{ $loan->getDueDate() }}</td>
                         <td>
-                            <a href="{{ route('loan_update', $loan) }}" class="btn btn-warning">Return Book</a>
+                            <form method="POST" action="{{ route('loan_update', $loan) }}">
+                                @csrf
+                                @method('PUT')
+                                <button class="btn btn-warning">Return Book</a>
+                            </form>
                         </td>
                     </tr>
+                    @empty
+                    <p>No currently existing loans</p>
+                @endforelse
             </tbody>
         </table>
 
+        <hr>
+        {{ $loans->links() }}
     </div>
 @endsection

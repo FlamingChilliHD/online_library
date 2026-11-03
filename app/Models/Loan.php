@@ -10,6 +10,7 @@ class Loan extends Model
     protected $fillable = [
         'user_id',
         'book_id',
+        'borrowed_at',
         'due_date',
         'fine_amount',
     ];
@@ -27,4 +28,16 @@ class Loan extends Model
         'borrowed_at' => 'date',
         'returned_at' => 'date',
     ];
+
+    public function getBorrowDate() {
+        return $this->borrowed_at->toDateString();
+    }
+
+    public function getDueDate() {
+        return $this->due_date->toDateString();
+    }
+
+    public function getReturnedDate() {
+        return $this->returned_at->toDateString();
+    }
 }

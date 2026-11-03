@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use App\Models\Loan;
+use Carbon\Carbon;
 
 class UpdateLoanFines extends Command
 {
@@ -35,13 +36,17 @@ class UpdateLoanFines extends Command
         foreach ($overdue_loans as $loan) {
             $days_overdue = abs(today()->diffInDays($loan->due_date));
 
-            $applied_days = max(1, $days_overdue);
+            if ($days_overdue <= 1) {
+                continue;
+            }
+
+            $applied_days = $days_overdue - 1;
 
             $loan->update([
                 'fine_amount' => $applied_days * $base_fine,
             ]);
 
-            $this->info("Loan ID {$loan->id}: Overdue by {$days_overdue} days. Fine: " . ($days_overdue * $base_fine));
+            $this->info("Loan ID {$loan->id}: Days overdue: {$days_overdue} days | Chargeable: {$applied_days} days | Fine: £" . ($applied_days * $base_fine));
         }
     }
 }

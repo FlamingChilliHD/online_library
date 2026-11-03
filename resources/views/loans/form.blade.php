@@ -25,8 +25,8 @@
                 <input type="date" name="due_date" id="due_date" class="form-control" value="{{ old('due_date') }}" required>
             </div>
 
-            <button type="submit" class="btn btn-primary">Reserve Book</button>
-            <a href="{{ route('books_index') }}" class="btn btn-secondary" style="margin-left: 10px">Return to gallery.</a>
+            <button type="submit" class="btn btn-primary">Borrow Book</button>
+            <a href="{{ route('books_index') }}" class="btn btn-secondary" style="margin-left: 10px">Return to Gallery</a>
         </form>
     </div>
 @endsection

@@ -11,16 +11,19 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('loans', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('user_id');
-            $table->foreignId('book_id');
-            $table->date('borrowed_at');
-            $table->date('due_date');
-            $table->date('returned_at')->nullable();
-            $table->decimal('fine_amount', 8, 2)->nullable();
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('loans')) {
+            Schema::create('loans', function (Blueprint $table) {
+                $table->id();
+                $table->foreignId('user_id');
+                $table->foreignId('book_id');
+                $table->date('borrowed_at');
+                $table->date('due_date');
+                $table->date('returned_at')->nullable();
+                $table->decimal('fine_amount', 8, 2)->default(0.00);
+                $table->boolean('fine_paid')->default(false);
+                $table->timestamps();
+            });
+        }
     }
 
     /**

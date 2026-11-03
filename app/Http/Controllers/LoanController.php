@@ -6,6 +6,7 @@ use App\Models\Book;
 use Illuminate\Http\Request;
 use App\Models\Loan;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 
 class LoanController extends Controller
@@ -15,15 +16,15 @@ class LoanController extends Controller
         ->whereNull('returned_at')
         ->latest()->paginate(5);
 
-        return view('loans/loans_index', compact('loans'));
+        return view('loans/index', compact('loans'));
     }
 
     public function create(Book $book) {
-        return view('loans/loan_form', compact('book'));
+        return view('loans/form', compact('book'));
     }
 
     public function store(Book $book, Request $request) {
-        $limit = now()->addDays(30);
+        $limit = today()->addDays(30);
         $input_date = Carbon::parse($request->due_date);
 
         if ($input_date->gt($limit)) {
@@ -42,6 +43,7 @@ class LoanController extends Controller
         $loan = Loan::create([
             'user_id' => Auth::id(),
             'book_id' => $book->id,
+            'borrowed_at' => today(),
             'due_date' => $input_date,
         ]);
 
@@ -51,11 +53,26 @@ class LoanController extends Controller
     }
 
     public function show(Loan $loan) {
-        return view('loans/loan_show', compact('loan'));
+        return view('loans/show', compact('loan'));
+    }
+
+    public function return(Loan $loan) {
+        Artisan::call('loans:update-fines');
+
+        if ($loan->fine_amount > 0.00 && $loan->fine_paid = false) {
+            $fine_pay = 'Please pay your fine before returning the book.';
+
+            return redirect()->route('fine_create')->with([
+                'loan' => $loan,
+                'fine_pay' => $fine_pay,
+            ]);
+        }
+
+        return view('loans/return', compact('loan'));
     }
 
     public function update(Loan $loan) {
-        $return_date = Carbon::now();
+        $return_date = today();
         $loan->returned_at = $return_date;
 
         $loan->book->increment('stock');
@@ -63,7 +80,7 @@ class LoanController extends Controller
 
         $returned = 'Book returned successfully.';
         return redirect()->route('books_index')
-        ->with('success', $returned);
+        ->with('returned', $returned);
     }
 
     public function returned() {
@@ -72,6 +89,6 @@ class LoanController extends Controller
         ->whereNotNull('returned_at')
         ->latest()->paginate(5);
 
-        return view('loans/loans_returned', compact('loans'));
+        return view('loans/returned', compact('loans'));
     }
 }

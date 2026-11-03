@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="container mt-4">
-        <h1>Returned Loans</h1>
+        <h1>Librarian Dashboard</h1>
 
         <table class="table table-striped">
             <thead>
@@ -11,8 +11,8 @@
                     <th>Author</th>
                     <th>ISBN</th>
                     <th>Category</th>
-                    <th>Borrowed At</th>
-                    <th>Loan Duration</th>
+                    <th>Borrowed</th>
+                    <th>Due</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -24,12 +24,18 @@
                         <td>{{ $loan->book->author }}</td>
                         <td>{{ $loan->book->ISBN }}</td>
                         <td>{{ $loan->book->category->name }}</td>
-                        <td>{{ $loan->borrowed_at }}</td>
-                        <td>{{ $loan->due_date }}</td>
-                        <td>{{ $loan->returned_at }}</td>
+                        <td>{{ $loan->getBorrowDate() }}</td>
+                        <td>{{ $loan->getDueDate() }}</td>
+                        <td>
+                            <form method="POST" action="{{ route('loan_update', $loan) }}">
+                                @csrf
+                                @method('PUT')
+                                <button class="btn btn-warning">Return Book</a>
+                            </form>
+                        </td>
                     </tr>
                     @empty
-                    <p>No returned loans</p>
+                    <p>No currently existing loans</p>
                 @endforelse
             </tbody>
         </table>

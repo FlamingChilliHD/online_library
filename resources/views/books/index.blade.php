@@ -2,6 +2,21 @@
 
 @section('content')
     <div class="container mt-4">
+        @php
+            $messages = [];
+            if ($msg = session('returned')) $messages[] = $msg;
+        @endphp
+
+        @if(!empty($messages))
+            <div class="alert alert-success">
+                <ul>
+                    @foreach($messages as $message)
+                        <li>{{ $message }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
         <h1>Book Gallery</h1>
 
         <table class="table table-striped">
